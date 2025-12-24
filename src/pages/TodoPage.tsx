@@ -2,15 +2,20 @@ import { type FormEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { FiPlus } from "react-icons/fi";
 import Button from "../components/common/Button.tsx";
+import { useTodoStore } from "../stores/useTodoStore.ts";
 
 function TodoPage() {
     const [input, setInput] = useState("");
+    const { todos, addTodo, toggleTodo, removeTodo } = useTodoStore();
 
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // TODO 저장소에 저장
-        setInput("");      // input에 입력된 값을 빈 string으로 바꿔줌
-    }
+        // string 타입에서 사용할 수 있는 메소드 중 .trim()
+        // trim() : 문자열 양쪽 끝의 공백을 제거
+        if (input.trim() === "") return;
+        addTodo(input.trim());
+        setInput(""); // input에 입력된 값을 빈 string으로 바꿔줌
+    };
 
     return (
         <div className={twMerge(["max-w-2xl", "mx-auto", "mt-10", "p-4"])}>
