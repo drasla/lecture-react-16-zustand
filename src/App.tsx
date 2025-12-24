@@ -12,7 +12,7 @@ function App() {
             <div
                 className={twMerge(["min-h-dvh"], ["flex", "flex-col"], ["bg-background-default"])}>
                 <NavBar />
-                <main className={twMerge(["flex-1", "mx-auto", "px-4"])}>
+                <main className={twMerge(["w-full", "flex-1", "mx-auto", "px-4"])}>
                     <Routes>
                         <Route
                             path={"/"}
