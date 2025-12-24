@@ -3,17 +3,22 @@ import { twMerge } from "tailwind-merge";
 import { FiCheck, FiPlus, FiTrash2 } from "react-icons/fi";
 import Button from "../components/common/Button.tsx";
 import { useTodoStore } from "../stores/useTodoStore.ts";
+import { useAuthStore } from "../stores/useAuthStore.ts";
 
 function TodoPage() {
     const [input, setInput] = useState("");
     const { todos, addTodo, toggleTodo, removeTodo } = useTodoStore();
+    const { user } = useAuthStore();
+
+    const myTodos = todos.filter(item => item.userId === user?.userId);
 
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         // string 타입에서 사용할 수 있는 메소드 중 .trim()
         // trim() : 문자열 양쪽 끝의 공백을 제거
         if (input.trim() === "") return;
-        addTodo(input.trim());
+        if (!user) return;
+        addTodo(input.trim(), user.userId);
         setInput(""); // input에 입력된 값을 빈 string으로 바꿔줌
     };
 
@@ -52,7 +57,7 @@ function TodoPage() {
                         할 일이 없습니다. 새로 추가해보세요!
                     </p>
                 )}
-                {todos.map((item, index) => (
+                {myTodos.map((item, index) => (
                     <div
                         key={index}
                         className={twMerge(
@@ -61,7 +66,13 @@ function TodoPage() {
                             ["border", "border-divider", "shadow-sm", "rounded-lg"],
                             item.completed && "opacity-60",
                         )}>
-                        <div className={twMerge(["flex", "items-center", "gap-3", "overflow-hidden"])}>
+                        <div
+                            className={twMerge([
+                                "flex",
+                                "items-center",
+                                "gap-3",
+                                "overflow-hidden",
+                            ])}>
                             <button
                                 onClick={() => toggleTodo(item.id)}
                                 className={twMerge(
@@ -78,10 +89,13 @@ function TodoPage() {
                                 )}>
                                 {item.completed && <FiCheck size={14} />}
                             </button>
-                            <span className={twMerge(
-                                ["text-lg", "truncate", "flex-1"],
-                                item.completed && ["line-through"],
-                            )}>{item.text}</span>
+                            <span
+                                className={twMerge(
+                                    ["text-lg", "truncate", "flex-1"],
+                                    item.completed && ["line-through"],
+                                )}>
+                                {item.text}
+                            </span>
                         </div>
                         <button
                             onClick={() => removeTodo(item.id)}
