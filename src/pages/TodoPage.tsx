@@ -1,14 +1,17 @@
 import { type FormEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { FiCheck, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiCheck, FiEdit2, FiPlus, FiTrash2 } from "react-icons/fi";
 import Button from "../components/common/Button.tsx";
-import { useTodoStore } from "../stores/useTodoStore.ts";
+import { useTodoStore, type TodoType } from "../stores/useTodoStore.ts";
 import { useAuthStore } from "../stores/useAuthStore.ts";
+import { useModalStore } from "../stores/useModalStore.ts";
+import EditTodoForm from "../components/todos/EditTodoForm.tsx";
 
 function TodoPage() {
     const [input, setInput] = useState("");
     const { todos, addTodo, toggleTodo, removeTodo } = useTodoStore();
     const { user } = useAuthStore();
+    const { openModal } = useModalStore();
 
     const myTodos = todos.filter(item => item.userId === user?.userId);
 
@@ -20,6 +23,10 @@ function TodoPage() {
         if (!user) return;
         addTodo(input.trim(), user.userId);
         setInput(""); // input에 입력된 값을 빈 string으로 바꿔줌
+    };
+
+    const handleEditClick = (todo: TodoType) => {
+        openModal("할 일 수정", <EditTodoForm todo={todo} />);
     };
 
     return (
@@ -57,7 +64,7 @@ function TodoPage() {
                         할 일이 없습니다. 새로 추가해보세요!
                     </p>
                 )}
-                {myTodos.map((item, index) => (
+                {myTodos && myTodos.map((item, index) => (
                     <div
                         key={index}
                         className={twMerge(
@@ -97,14 +104,24 @@ function TodoPage() {
                                 {item.text}
                             </span>
                         </div>
-                        <button
-                            onClick={() => removeTodo(item.id)}
-                            className={twMerge(
-                                ["text-text-disabled", "hover:text-error-main"],
-                                ["transition-colors", "duration-500"],
-                            )}>
-                            <FiTrash2 size={18} />
-                        </button>
+                        <div className={twMerge(["flex", "items-center", "gap-3"])}>
+                            <button
+                                onClick={() => handleEditClick(item)}
+                                className={twMerge(
+                                    ["text-text-disabled", "hover:text-primary-main"],
+                                    ["transition-colors", "duration-500"],
+                                )}>
+                                <FiEdit2 size={18} />
+                            </button>
+                            <button
+                                onClick={() => removeTodo(item.id)}
+                                className={twMerge(
+                                    ["text-text-disabled", "hover:text-error-main"],
+                                    ["transition-colors", "duration-500"],
+                                )}>
+                                <FiTrash2 size={18} />
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>

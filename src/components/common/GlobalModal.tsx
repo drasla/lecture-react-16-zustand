@@ -52,7 +52,7 @@ function GlobalModal() {
                         <FiX size={20} />
                     </button>
                 </div>
-                <div className={"p-6"}>{content}</div>
+                {content && <div className={"p-6"}>{content}</div>}
             </div>
         </div>
     );
