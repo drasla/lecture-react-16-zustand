@@ -5,10 +5,12 @@ import SignIn from "./pages/SignIn.tsx";
 import SignUp from "./pages/SignUp.tsx";
 import NavBar from "./components/common/NavBar.tsx";
 import ProtectedRoute from "./components/PreotectedRoute.tsx";
+import GlobalModal from "./components/common/GlobalModal.tsx";
 
 function App() {
     return (
         <BrowserRouter>
+            <GlobalModal />
             <div
                 className={twMerge(["min-h-dvh"], ["flex", "flex-col"], ["bg-background-default"])}>
                 <NavBar />
